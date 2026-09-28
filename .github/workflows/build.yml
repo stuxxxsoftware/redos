@@ -1,0 +1,24 @@
+name: Build RedOS
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Liberer de l'espace disque
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache
+
+      - name: Construire RedOS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debootstrap debian-archive-keyring
+          sudo bash build-redos.sh
+
+      - name: Publier l'ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: redos-v1-iso
+          path: redos-v1.iso
+          compression-level: 0
